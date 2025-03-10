@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "649283235123",
+    "project_id": "animal-parc",
+    "storage_bucket": "animal-parc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649283235123:android:fef4f6286334e2fbb5a246",
+        "android_client_info": {
+          "package_name": "fr.isen.animalpark"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP1-iOaWA-2FUbzUbJIQCReUvGiUpgr4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
