@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                 }
            buttonSignOut(auth)
         }
-    }
+    }}
 
     override fun onStart() {
         super.onStart()
@@ -117,6 +117,7 @@ class MainActivity : ComponentActivity() {
         })
     }
 }
+
 
 @Composable
 fun buttonSignOut(auth: FirebaseAuth){
