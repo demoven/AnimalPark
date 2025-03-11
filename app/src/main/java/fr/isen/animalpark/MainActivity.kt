@@ -36,6 +36,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.ui.theme.AnimalParkTheme
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     private lateinit var firebaseDatabase: FirebaseDatabase
@@ -67,8 +68,9 @@ class MainActivity : ComponentActivity() {
     }
     fun parseBiomesFromJson(jsonString: String): List<Biome> {
         val gson = Gson()
+        val jsonArray = JSONObject(jsonString).getJSONArray("biomes").toString()
         val type = object : TypeToken<List<Biome>>() {}.type
-        return gson.fromJson(jsonString, type)
+        return gson.fromJson(jsonArray, type)
     }
 
     private fun retrieveDataFromDatabase(){
