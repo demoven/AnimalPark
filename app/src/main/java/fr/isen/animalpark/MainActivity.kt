@@ -1,6 +1,7 @@
 package fr.isen.animalpark
 
 import android.content.Intent
+import android.net.Uri
 
 import android.os.Bundle
 import android.util.Log
@@ -205,6 +206,26 @@ fun BiomeListScreen(biomes: List<Biome>,modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun openDialer(){
+    val phoneNumber = "0123456789"
+    val context = LocalContext.current
+    Button(
+        modifier = Modifier.padding(top = 150.dp),
+        onClick = {
+            val u = Uri.parse("tel:$phoneNumber")
+            val i = Intent(Intent.ACTION_DIAL, u)
+            try {
+                context.startActivity(i)
+            } catch (e: Exception) {
+                Log.d("MainActivity", "Error: $e")
+            }
+        }
+    ){
+        Text("Call the zoo")
     }
 }
 
