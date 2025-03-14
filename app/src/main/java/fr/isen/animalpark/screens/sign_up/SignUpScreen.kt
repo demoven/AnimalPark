@@ -34,18 +34,20 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import fr.isen.animalpark.LoginActivity
 import fr.isen.animalpark.MainActivity
 import fr.isen.animalpark.R
 import fr.isen.animalpark.RegisterActivity
 
 @Composable
-fun SignUpScreen(auth: FirebaseAuth) {
+fun SignUpScreen(auth: FirebaseAuth, db: DatabaseReference) {
 
     //Use mutableStateOf to store the email and password
     var email = remember { mutableStateOf("") }
     var password = remember { mutableStateOf("") }
     val context = LocalContext.current
+
 
 
     Column(
@@ -146,6 +148,12 @@ fun SignUpScreen(auth: FirebaseAuth) {
                                         context.startActivity(intent)
                                         //Finish the Register and login activities
                                         (context as RegisterActivity).finish()
+
+                                        if (auth.currentUser != null) {
+                                            //Save the user in the database
+                                            db.child("users").child(auth.currentUser!!.uid).child("isAdmin").setValue(false)
+                                        }
+
 
                                     } else {
                                         // If sign in fails, display a message to the user.

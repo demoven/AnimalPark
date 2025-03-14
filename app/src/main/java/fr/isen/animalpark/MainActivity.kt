@@ -43,6 +43,7 @@ import fr.isen.animalpark.models.Enclosure
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fr.isen.animalpark.models.Biome
+import fr.isen.animalpark.models.User
 import fr.isen.animalpark.ui.theme.AnimalParkTheme
 import org.json.JSONObject
 
@@ -55,9 +56,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
         firebaseDatabase = FirebaseDatabase.getInstance()
-        Log.d("Firebase", firebaseDatabase.toString())
         databaseReference = firebaseDatabase.getReference()
         retrieveDataFromDatabase()
+        getUserDataFromDatabase()
         enableEdgeToEdge()
         setContent {
             AnimalParkTheme {
@@ -80,10 +81,7 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "OnStart")
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            Log.d("User", currentUser.toString())
-            currentUser.let {
-                Log.d("User email", it.email.toString())
-            }
+            getUserDataFromDatabase()
         } else {
             //Launch the login activity
             val intent = Intent(this, LoginActivity::class.java)
@@ -98,6 +96,34 @@ class MainActivity : ComponentActivity() {
         return gson.fromJson(jsonArray, type)
     }
 
+    fun getUserDataFromDatabase(){
+        val user = auth.currentUser
+        if (user != null){
+            val userId = user.uid
+            databaseReference.child("users").child(userId).child("isAdmin").addListenerForSingleValueEvent(object:ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot){
+                    val isAdmin = snapshot.value as Boolean
+                    User.setCurrentUser(User(userId, isAdmin))
+                    if (User.getCurrentUser()?.isAdmin == true)
+                    {
+                        Log.d("YEEEEEEEEE", "IsAdmin")
+                    }
+                    else
+                    {
+                        Log.d("USSSSSEEEEERRRR", "IsNotAdmin")
+                    }
+                    if (isAdmin)
+                        Log.d("USSSSSEEEEERRRR", "IsAdmin")
+                    else
+                        Log.d("USSSSSEEEEERRRR", "IsNotAdmin")
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("Firebase", "Erreur de chargement: ${error.message}")
+                }
+            })
+        }
+    }
+
     private fun retrieveDataFromDatabase(){
         databaseReference.addListenerForSingleValueEvent(object:ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot){
@@ -105,8 +131,6 @@ class MainActivity : ComponentActivity() {
                  biomelist = parseBiomesFromJson(json)
                 for (enclosure in snapshot.children){
                     Log.d("Enclosure", enclosure.toString())
-
-
                 }
             }
 
