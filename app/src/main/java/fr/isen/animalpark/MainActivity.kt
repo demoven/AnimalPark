@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import fr.isen.animalpark.models.Biome
+import fr.isen.animalpark.screens.biomelistscreen.BiomeListScreen
 import fr.isen.animalpark.ui.theme.AnimalParkTheme
 import org.json.JSONObject
 
@@ -89,54 +90,6 @@ class MainActivity : ComponentActivity() {
                 Log.d("Firebase", "Erreur de chargement: ${error.message}")
             }
         })
-    }
-}
-
-@Composable
-fun BiomeListScreen(biomes: List<Biome>,modifier: Modifier = Modifier) {
-    LazyColumn {
-        items(biomes) { biome ->
-            Text(
-                text = biome.name,
-                color = Color(android.graphics.Color.parseColor(biome.color)),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(8.dp)
-            )
-
-            biome.enclosures.forEach { enclosure ->
-                Card(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text(
-                            text = "Enclosure ID: ${enclosure.id}",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(text = "Meal: ${enclosure.meal}")
-                        Text(text = "Open: ${if (enclosure.isOpen) "Yes" else "No"}")
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Animals:",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-
-                        if (enclosure.animals.isNullOrEmpty()) {
-                            Text(text = "No animals in this enclosure")
-                        } else {
-                            enclosure.animals?.forEach { animal ->
-                            Text(
-                                    text = "- ${animal.name} (ID: ${animal.id})",
-                                    modifier = Modifier.padding(start = 8.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
