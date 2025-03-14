@@ -1,5 +1,6 @@
 package fr.isen.animalpark
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,6 +17,12 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        //Check if the user is already logged in
+        if (auth.currentUser != null) {
+            User.setCurrentUser(User(auth.currentUser!!.uid))
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
         enableEdgeToEdge()
         setContent {
             SignInScreen(auth)
