@@ -57,9 +57,7 @@ class MainActivity : ComponentActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance()
         Log.d("Firebase", firebaseDatabase.toString())
         databaseReference = firebaseDatabase.getReference()
-        Log.d("Database", databaseReference.toString())
         retrieveDataFromDatabase()
-        Log.d("Database", "Data retrieved")
         enableEdgeToEdge()
         setContent {
             AnimalParkTheme {
@@ -79,6 +77,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        Log.d("MainActivity", "OnStart")
         val currentUser = auth.currentUser
         if (currentUser != null) {
             Log.d("User", currentUser.toString())
@@ -130,7 +129,7 @@ fun buttonSignOut(auth: FirebaseAuth){
             val intent = Intent(context, LoginActivity::class.java)
             context.startActivity(intent)
             // Finish the current activity
-            (context as MainActivity).finish()
+//            (context as MainActivity).finish()
         },
         modifier = Modifier.padding(top = 48.dp)
     ) {

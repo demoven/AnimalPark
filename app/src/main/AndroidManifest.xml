@@ -20,15 +20,15 @@
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.AnimalPark" />
         <activity
-            android:name=".LoginActivity"
-            android:exported="true"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.AnimalPark" />
-        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AnimalPark">
+            android:theme="@style/Theme.AnimalPark"/>
+        <activity
+                android:name=".LoginActivity"
+                android:exported="true"
+                android:label="@string/title_activity_login"
+                android:theme="@style/Theme.AnimalPark" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

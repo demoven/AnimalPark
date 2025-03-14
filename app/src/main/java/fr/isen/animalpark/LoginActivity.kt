@@ -31,7 +31,6 @@ class LoginActivity : ComponentActivity() {
         auth = Firebase.auth
         enableEdgeToEdge()
         setContent {
-            Log.d("LoginActivity", "LoginActivity")
             SignInScreen(auth)
         }
     }

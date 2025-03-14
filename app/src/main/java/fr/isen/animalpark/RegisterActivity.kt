@@ -1,6 +1,7 @@
 package fr.isen.animalpark
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +17,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import fr.isen.animalpark.screens.sign_up.SignUpScreen
 import fr.isen.animalpark.ui.theme.AnimalParkTheme
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 class RegisterActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth

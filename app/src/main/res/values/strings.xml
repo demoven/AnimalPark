@@ -2,4 +2,14 @@
     <string name="app_name">AnimalPark</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="logo">Logo du parc</string>
+    <string name="email">Email</string>
+    <string name="password">Mot de passe</string>
+    <string name="login">Connexion</string>
+    <string name="register">Inscription</string>
+    <string name="create_account">Créer un compte</string>
+    <string name="fill_in_all_fields">Veuillez remplir tous les champs</string>
+    <string name="failed_login">Echec de l authentification</string>
+    <string name="failed_register">Echec de l inscription</string>
+    <string name="cancel">Annuler</string>
 </resources>
