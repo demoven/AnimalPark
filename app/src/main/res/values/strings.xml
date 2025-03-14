@@ -7,5 +7,6 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="animals">Animals</string>
-    <string name= "No_animals">Pas d animal dans l enclos </string>
+    <string name="No_animals">Pas d animal dans l enclos </string>
+    <string name="title_activity_enclosure_details">EnclosureDetails</string>
 </resources>

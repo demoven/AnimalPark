@@ -1,5 +1,6 @@
 package fr.isen.animalpark.screens.biomelistscreen
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import fr.isen.animalpark.EnclosureDetailsActivity
 import fr.isen.animalpark.R
 
 import fr.isen.animalpark.models.Biome
@@ -71,6 +74,17 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier) {
                                             modifier = Modifier.padding(start = 8.dp)
                                         )
                                     }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Button(
+                                    onClick = {
+                                        val intent = Intent(context, EnclosureDetailsActivity::class.java)
+                                        intent.putExtra(EnclosureDetailsActivity.ENCLOSURE_KEY, enclosure) // Tu peux passer ce que tu veux ici
+                                        context.startActivity(intent)
+                                    }
+                                ) {
+                                    Text("Voir les détails")
                                 }
                             }
                         }
