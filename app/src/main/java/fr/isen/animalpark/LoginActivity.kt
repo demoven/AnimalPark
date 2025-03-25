@@ -1,47 +1,38 @@
 package fr.isen.animalpark
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import fr.isen.animalpark.ui.theme.AnimalParkTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import fr.isen.animalpark.models.User
+import fr.isen.animalpark.screens.sign_in.SignInScreen
 
 class LoginActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
+        //Check if the user is already logged in
+        if (auth.currentUser != null) {
+            User.setCurrentUser(User(auth.currentUser!!.uid))
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
         enableEdgeToEdge()
         setContent {
-            AnimalParkTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting2(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            SignInScreen(auth)
         }
     }
-}
 
-@Composable
-fun Greeting2(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview2() {
-    AnimalParkTheme {
-        Greeting2("Android")
+    override fun onStart() {
+        super.onStart()
+        User.setCurrentUser(User("", false))
     }
 }
+
+
