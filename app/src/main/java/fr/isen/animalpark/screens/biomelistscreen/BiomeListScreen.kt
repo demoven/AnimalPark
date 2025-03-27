@@ -1,6 +1,7 @@
 package fr.isen.animalpark.screens.biomelistscreen
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,15 +24,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.database.DatabaseReference
 import fr.isen.animalpark.EnclosureDetailsActivity
 import fr.isen.animalpark.R
 
 import fr.isen.animalpark.models.Biome
+import fr.isen.animalpark.models.User
 
 
 @Composable
-fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier) {
+fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, databaseReference: DatabaseReference) {
     val context = LocalContext.current
+
     LazyColumn(modifier = modifier) {
         items(biomes) { biome ->
             var expanded by remember { mutableStateOf(false) }
@@ -50,6 +54,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier) {
 
                 if (expanded) {
                     biome.enclosures.forEach { enclosure ->
+                        var isOpen by remember { mutableStateOf(enclosure.isOpen) }
                         Card(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 6.dp)
@@ -58,7 +63,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier) {
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
                                 Text(text = context.getString(R.string.meal)+": ${enclosure.meal}")
-                                Text(text = context.getString(R.string.open)+": ${if (enclosure.isOpen) context.getString(R.string.yes)  else context.getString(R.string.no)}")
+                                Text(text = context.getString(R.string.open)+": ${if (isOpen) context.getString(R.string.yes)  else context.getString(R.string.no)}")
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = context.getString(R.string.animals)+":",
@@ -86,6 +91,22 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier) {
                                 ) {
                                     Text("Voir les détails")
                                 }
+                                if (User.getCurrentUser()?.isAdmin == true)
+                                {
+                                    Button(
+                                        onClick = {
+                                            val biomeId = enclosure.id_biomes.toInt() - 1
+                                            val enclosureIndex = biome.enclosures.indexOfFirst { it.id == enclosure.id }
+                                            enclosure.isOpen = !enclosure.isOpen
+                                            isOpen = enclosure.isOpen
+                                            val updates = mapOf("isOpen" to enclosure.isOpen)
+                                            databaseReference.child("biomes").child(biomeId.toString()).child("enclosures").child(enclosureIndex.toString()).updateChildren(updates)
+                                        }
+                                    ) {
+                                        Text ("Toggle")
+                                    }
+                                }
+
                             }
                         }
                     }
@@ -94,4 +115,3 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier) {
         }
     }
 }
-

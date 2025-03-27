@@ -68,7 +68,8 @@ class MainActivity : ComponentActivity() {
                     if (biomelist.isNotEmpty()) {
                         BiomeListScreen(
                             biomes = biomelist,
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier.padding(innerPadding),
+                            databaseReference = databaseReference
                         )
                     } else {
                         Text("Chargement des biomes...", modifier = Modifier.padding(16.dp))
@@ -131,9 +132,6 @@ class MainActivity : ComponentActivity() {
             override fun onDataChange(snapshot: DataSnapshot){
                 val json = Gson().toJson(snapshot.value)
                  biomelist = parseBiomesFromJson(json)
-                for (enclosure in snapshot.children){
-                    Log.d("Enclosure", enclosure.toString())
-                }
             }
 
             override fun onCancelled(error: DatabaseError) {
