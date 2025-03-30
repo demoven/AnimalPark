@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -46,6 +47,7 @@ import com.google.gson.reflect.TypeToken
 import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.screens.biomelistscreen.BiomeListScreen
 import fr.isen.animalpark.models.User
+import fr.isen.animalpark.screens.main.MainScreen
 import fr.isen.animalpark.ui.theme.AnimalParkTheme
 import org.json.JSONObject
 
@@ -60,28 +62,17 @@ class MainActivity : ComponentActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference()
         retrieveDataFromDatabase()
-        getUserDataFromDatabase()
+//        getUserDataFromDatabase()
         enableEdgeToEdge()
         setContent {
             AnimalParkTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    if (biomelist.isNotEmpty()) {
-                        BiomeListScreen(
-                            biomes = biomelist,
-                            modifier = Modifier.padding(innerPadding),
-                            databaseReference = databaseReference
-                        )
-                    } else {
-                        Text("Chargement des biomes...", modifier = Modifier.padding(16.dp))
-                    }
-                }
+                MainScreen(biomes = biomelist, databaseReference = databaseReference)
            buttonSignOut(auth)
         }
     }}
 
     override fun onStart() {
         super.onStart()
-        Log.d("MainActivity", "OnStart")
         val currentUser = auth.currentUser
         if (currentUser != null) {
             getUserDataFromDatabase()
@@ -109,16 +100,16 @@ class MainActivity : ComponentActivity() {
                     User.setCurrentUser(User(userId, isAdmin))
                     if (User.getCurrentUser()?.isAdmin == true)
                     {
-                        Log.d("YEEEEEEEEE", "IsAdmin")
+                        Log.d("UserIsAdmin", "IsAdmin")
                     }
                     else
                     {
-                        Log.d("USSSSSEEEEERRRR", "IsNotAdmin")
+                        Log.d("UserIsAdmin", "IsNotAdmin")
                     }
                     if (isAdmin)
-                        Log.d("USSSSSEEEEERRRR", "IsAdmin")
+                        Log.d("UserIsAdmin", "IsAdmin")
                     else
-                        Log.d("USSSSSEEEEERRRR", "IsNotAdmin")
+                        Log.d("UserIsAdmin", "IsNotAdmin")
                 }
                 override fun onCancelled(error: DatabaseError) {
                     Log.d("Firebase", "Erreur de chargement: ${error.message}")
@@ -160,28 +151,6 @@ fun buttonSignOut(auth: FirebaseAuth){
         Text("Sign Out")
     }
 }
-@Composable
-fun openDialer(){
-    val phoneNumber = "0123456789"
-    val context = LocalContext.current
-    Button(
-        modifier = Modifier.padding(top = 150.dp),
-        onClick = {
-            val u = Uri.parse("tel:$phoneNumber")
-            val i = Intent(Intent.ACTION_DIAL, u)
-            try {
-                context.startActivity(i)
-            } catch (e: Exception) {
-                Log.d("MainActivity", "Error: $e")
-            }
-        }
-    ){
-        Text("Call the zoo")
-    }
-}
-
-
-
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

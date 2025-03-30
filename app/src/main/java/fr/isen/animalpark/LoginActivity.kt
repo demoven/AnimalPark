@@ -22,6 +22,7 @@ class LoginActivity : ComponentActivity() {
             User.setCurrentUser(User(auth.currentUser!!.uid))
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
         enableEdgeToEdge()
         setContent {

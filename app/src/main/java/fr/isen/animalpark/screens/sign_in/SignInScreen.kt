@@ -164,6 +164,8 @@ fun SignInScreen(auth: FirebaseAuth) {
                 //Redirect to the register activity
                 val intent = Intent(context, RegisterActivity::class.java)
                 context.startActivity(intent)
+                //Finish the current activity
+                (context as LoginActivity).finish()
             }
         ) {
             Text(context.getString(R.string.create_account))
