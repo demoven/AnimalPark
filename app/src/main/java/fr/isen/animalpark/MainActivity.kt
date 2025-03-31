@@ -83,6 +83,7 @@ class MainActivity : ComponentActivity() {
             finish()
         }
     }
+
     fun parseBiomesFromJson(jsonString: String): List<Biome> {
         val gson = Gson()
         val jsonArray = JSONObject(jsonString).getJSONArray("biomes").toString()

@@ -28,11 +28,20 @@ class EnclosureDetailsActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 if (enclosure != null) {
-                    EnclosureDetailsScreen(enclosure = enclosure)
+                    EnclosureDetailsScreen(enclosure = enclosure, eventHandler = { animalName ->
+                        startAnimalDetailsActivity(animalName)
+                    })
                 } else {
                     Text("Enclosure not found")
                 }
             }
         }
+    }
+
+    private fun startAnimalDetailsActivity(animalName: String) {
+        val intent = Intent(this, AnimalDetailsActivity::class.java).apply{
+            putExtra(AnimalDetailsActivity.animalExtraKey, animalName)
+        }
+        startActivity(intent)
     }
 }
