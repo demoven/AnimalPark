@@ -68,4 +68,5 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
     implementation ("com.google.code.gson:gson:2.12.1")
     implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 }
