@@ -46,6 +46,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                     .clickable { expanded = !expanded }
                     .padding(8.dp)
             ) {
+                // Display Biome Name
                 Text(
                     text = biome.name,
                     color = Color(android.graphics.Color.parseColor(biome.color)),
@@ -53,6 +54,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                 )
 
                 if (expanded) {
+                    // Show Enclosures
                     biome.enclosures.forEach { enclosure ->
                         var isOpen by remember { mutableStateOf(enclosure.isOpen) }
                         Card(
@@ -62,11 +64,12 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-                                Text(text = context.getString(R.string.meal)+": ${enclosure.meal}")
-                                Text(text = context.getString(R.string.open)+": ${if (isOpen) context.getString(R.string.yes)  else context.getString(R.string.no)}")
+                                Text(text = "${context.getString(R.string.meal)}: ${enclosure.meal}")
+                                Text(text = "${context.getString(R.string.open)}: ${if (isOpen) context.getString(R.string.yes) else context.getString(R.string.no)}")
+
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = context.getString(R.string.animals)+":",
+                                    text = "${context.getString(R.string.animals)}:",
                                     style = MaterialTheme.typography.labelLarge
                                 )
 
@@ -80,19 +83,22 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                                         )
                                     }
                                 }
+
                                 Spacer(modifier = Modifier.height(8.dp))
 
+                                // Button to View Enclosure Details
                                 Button(
                                     onClick = {
                                         val intent = Intent(context, EnclosureDetailsActivity::class.java)
-                                        intent.putExtra(EnclosureDetailsActivity.ENCLOSURE_KEY, enclosure) // Tu peux passer ce que tu veux ici
+                                        intent.putExtra(EnclosureDetailsActivity.ENCLOSURE_KEY, enclosure)
                                         context.startActivity(intent)
                                     }
                                 ) {
                                     Text("Voir les détails")
                                 }
-                                if (User.getCurrentUser()?.isAdmin == true)
-                                {
+
+                                // Admin Toggle Button
+                                if (User.getCurrentUser()?.isAdmin == true) {
                                     Button(
                                         onClick = {
                                             val biomeId = enclosure.id_biomes.toInt() - 1
@@ -103,12 +109,29 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                                             databaseReference.child("biomes").child(biomeId.toString()).child("enclosures").child(enclosureIndex.toString()).updateChildren(updates)
                                         }
                                     ) {
-                                        Text ("Toggle")
+                                        Text("Toggle")
                                     }
                                 }
-
                             }
                         }
+                    }
+
+                    // Show Services
+                    if (biome.services.isNotEmpty()) {
+                        Text(
+                            text = "Services:",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+
+                        biome.services.forEach { service ->
+                            Text(
+                                text = "- ${service.name} (Available: ${if (service.availability) "Yes" else "No"})",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    } else {
+                        Text(text = "No services available in this biome.", modifier = Modifier.padding(start = 8.dp))
                     }
                 }
             }
