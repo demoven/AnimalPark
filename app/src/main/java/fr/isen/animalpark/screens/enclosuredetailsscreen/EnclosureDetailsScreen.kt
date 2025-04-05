@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.firebase.database.DatabaseReference
 import fr.isen.animalpark.models.Enclosure
+import fr.isen.animalpark.models.User
 import fr.isen.animalpark.tools.DialTimePicker
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -48,7 +49,7 @@ fun EnclosureDetailsScreen(enclosure: Enclosure, eventHandler: (String) -> Unit,
             Text("Modifier l'heure de repas")
         }
 
-        if (showDialog) {
+        if (showDialog && User.getCurrentUser()?.isAdmin == true) {
             DialTimePicker(
                 onConfirm = { time ->
                     selectedTime = time
