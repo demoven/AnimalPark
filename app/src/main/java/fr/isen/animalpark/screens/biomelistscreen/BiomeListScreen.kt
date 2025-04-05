@@ -24,7 +24,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import fr.isen.animalpark.EnclosureDetailsActivity
 import fr.isen.animalpark.R
 
@@ -57,6 +60,23 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                     // Show Enclosures
                     biome.enclosures.forEach { enclosure ->
                         var isOpen by remember { mutableStateOf(enclosure.isOpen) }
+                        var mealTime by remember { mutableStateOf(enclosure.meal) }
+
+                        val enclosureRef = databaseReference.child("biomes")
+                            .child((enclosure.id_biomes.toInt() - 1).toString())
+                            .child("enclosures")
+                            .child(biome.enclosures.indexOf(enclosure).toString())
+
+                        enclosureRef.child("meal").addValueEventListener(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                mealTime = snapshot.getValue(String::class.java) ?: enclosure.meal
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Log.e("Database", "Failed to read meal time", error.toException())
+                            }
+                        })
+
                         Card(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp, vertical = 6.dp)
@@ -64,7 +84,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-                                Text(text = "${context.getString(R.string.meal)}: ${enclosure.meal}")
+                                Text(text = "${context.getString(R.string.meal)}: $mealTime")
                                 Text(text = "${context.getString(R.string.open)}: ${if (isOpen) context.getString(R.string.yes) else context.getString(R.string.no)}")
 
                                 Spacer(modifier = Modifier.height(4.dp))
@@ -91,6 +111,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                                     onClick = {
                                         val intent = Intent(context, EnclosureDetailsActivity::class.java)
                                         intent.putExtra(EnclosureDetailsActivity.ENCLOSURE_KEY, enclosure)
+                                        intent.putExtra(EnclosureDetailsActivity.ECLOSURE_INDEX, biome.enclosures.indexOf(enclosure))
                                         context.startActivity(intent)
                                     }
                                 ) {

@@ -2,9 +2,8 @@ package fr.isen.animalpark.tools.navigationbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -16,31 +15,35 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import fr.isen.animalpark.R
 
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
 ) {
+    val context = LocalContext.current
     val selectedNavigationIndex = rememberSaveable {
         mutableIntStateOf(0)
     }
 
     val navigationItems = listOf(
         NavigationItem(
-            title = "Home",
+            title = context.getString(R.string.home),
             icon = Icons.Default.Home,
             route = Screen.Home.rout
         ),
+
         NavigationItem(
-            title = "Profile",
-            icon = Icons.Default.Person,
-            route = Screen.Profile.rout
+            title = context.getString(R.string.location),
+            icon = Icons.Default.LocationOn,
+            route = Screen.Location.rout
         ),
         NavigationItem(
-            title = "Cart",
-            icon = Icons.Default.ShoppingCart,
-            route = Screen.Location.rout
+            title = context.getString(R.string.profile),
+            icon = Icons.Default.Person,
+            route = Screen.Profile.rout
         )
     )
 

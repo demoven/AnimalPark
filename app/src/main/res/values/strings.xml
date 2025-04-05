@@ -20,4 +20,7 @@
     <string name="No_animals">Pas d animal dans l enclos </string>
     <string name="title_activity_enclosure_details">EnclosureDetails</string>
     <string name="title_activity_animal_details">AnimalDetailsActivity</string>
+    <string name="location">Emplacement</string>
+    <string name="profile">Profil</string>
+    <string name="home">Accueil</string>
 </resources>
