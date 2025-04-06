@@ -4,6 +4,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,14 +33,15 @@ import fr.isen.animalpark.EnclosureDetailsActivity
 import fr.isen.animalpark.R
 
 import fr.isen.animalpark.models.Biome
+import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.models.User
 
 
 @Composable
-fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, databaseReference: DatabaseReference) {
+fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, enclosureDetailsHandler:(Enclosure, Int) -> Unit) {
     val context = LocalContext.current
 
-    LazyColumn(modifier = modifier) {
+    LazyColumn() {
         items(biomes) { biome ->
             var expanded by remember { mutableStateOf(false) }
 
@@ -93,7 +95,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                                     style = MaterialTheme.typography.labelLarge
                                 )
 
-                                if (enclosure.animals.isNullOrEmpty()) {
+                                if (enclosure.animals.isEmpty()) {
                                     Text(text = context.getString(R.string.No_animals))
                                 } else {
                                     enclosure.animals.forEach { animal ->
@@ -109,10 +111,7 @@ fun BiomeListScreen(biomes: List<Biome>, modifier: Modifier = Modifier, database
                                 // Button to View Enclosure Details
                                 Button(
                                     onClick = {
-                                        val intent = Intent(context, EnclosureDetailsActivity::class.java)
-                                        intent.putExtra(EnclosureDetailsActivity.ENCLOSURE_KEY, enclosure)
-                                        intent.putExtra(EnclosureDetailsActivity.ECLOSURE_INDEX, biome.enclosures.indexOf(enclosure))
-                                        context.startActivity(intent)
+                                        enclosureDetailsHandler(enclosure, biome.enclosures.indexOf(enclosure))
                                     }
                                 ) {
                                     Text("Voir les détails")

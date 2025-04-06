@@ -23,4 +23,5 @@
     <string name="location">Emplacement</string>
     <string name="profile">Profil</string>
     <string name="home">Accueil</string>
+    <string name="login_biomes">Chargement des biomes...</string>
 </resources>

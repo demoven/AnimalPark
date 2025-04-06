@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
 import com.google.firebase.database.DatabaseReference
 import fr.isen.animalpark.models.Biome
+import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.screens.biomelistscreen.BiomeListScreen
 import fr.isen.animalpark.screens.location.LocationScreen
 import fr.isen.animalpark.screens.profile.ProfileScreen
@@ -24,7 +25,7 @@ import fr.isen.animalpark.tools.navigationbar.Screen
 
 
 @Composable
-fun MainScreen(biomes: List<Biome>, databaseReference: DatabaseReference) {
+fun MainScreen(biomes: List<Biome>, databaseReference: DatabaseReference, signOutHandler: () -> Unit,  enclosureDetailsHandler:(Enclosure, Int) -> Unit) {
 
     val navController = rememberNavController()
 
@@ -43,9 +44,10 @@ fun MainScreen(biomes: List<Biome>, databaseReference: DatabaseReference) {
                     if (biomes.isNotEmpty()){
                         BiomeListScreen(
                             biomes = biomes,
-                            modifier = Modifier
-                                .padding(innerPadding),
-                            databaseReference = databaseReference
+                            databaseReference = databaseReference,
+                            enclosureDetailsHandler = { enclosure, index ->
+                                enclosureDetailsHandler(enclosure, index)
+                            }
                         )
                     }
                     else {
@@ -54,7 +56,7 @@ fun MainScreen(biomes: List<Biome>, databaseReference: DatabaseReference) {
 
                 }
                 composable(route = Screen.Profile.rout) {
-                    ProfileScreen()
+                    ProfileScreen(signOutHandler = signOutHandler)
                 }
             }
         NavHost(
