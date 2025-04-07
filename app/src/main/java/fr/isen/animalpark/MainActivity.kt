@@ -12,7 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,13 +29,15 @@ import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.models.User
 import fr.isen.animalpark.screens.main.MainScreen
-import fr.isen.animalpark.ui.theme.AnimalParkTheme
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private lateinit var auth: FirebaseAuth
+    private lateinit var user: FirebaseUser
     private var biomelist by mutableStateOf<List<Biome>>(emptyList())
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +48,21 @@ class MainActivity : ComponentActivity() {
 //        getUserDataFromDatabase()
         enableEdgeToEdge()
         setContent {
-                MainScreen(biomes = biomelist,
-                    databaseReference = databaseReference,
-                    signOutHandler = {
-                        auth.signOut()
-                        startLoginActivity()
-                    },
-                    enclosureDetailsHandler = { enclosure, indexEnclosure ->
-                        startEnclosureDetailsActivity(enclosure, indexEnclosure)
-                    }
-                )
+            MainScreen(
+                biomes = biomelist,
+                databaseReference = databaseReference,
+                signOutHandler = {
+                    auth.signOut()
+                    startLoginActivity()
+                },
+                enclosureDetailsHandler = { enclosure, indexEnclosure ->
+                    startEnclosureDetailsActivity(enclosure, indexEnclosure)
+                },
+                deleteAccountHandler = {
+                    deleteAccount()
+                },
+                user = user
+            )
         }
     }
 
@@ -60,6 +70,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         val currentUser = auth.currentUser
         if (currentUser != null) {
+            user = currentUser
             getUserDataFromDatabase()
         } else {
             startLoginActivity()
@@ -116,6 +127,24 @@ class MainActivity : ComponentActivity() {
         intent.putExtra(EnclosureDetailsActivity.ENCLOSURE_KEY, enclosure)
         intent.putExtra(EnclosureDetailsActivity.ECLOSURE_INDEX, indexEnclosure)
         startActivity(intent)
+    }
+
+    private fun deleteAccount() {
+        val user = auth.currentUser
+        if (user != null) {
+            user.delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("Firebase", "User account deleted.")
+                        startLoginActivity()
+                    } else {
+                        Log.d(
+                            "Firebase",
+                            "Failed to delete user account: ${task.exception?.message}"
+                        )
+                    }
+                }
+        }
     }
 }
 

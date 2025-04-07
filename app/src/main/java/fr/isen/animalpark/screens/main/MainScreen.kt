@@ -1,19 +1,17 @@
 package fr.isen.animalpark.screens.main
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.createGraph
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.models.Enclosure
@@ -22,10 +20,19 @@ import fr.isen.animalpark.screens.location.LocationScreen
 import fr.isen.animalpark.screens.profile.ProfileScreen
 import fr.isen.animalpark.tools.navigationbar.BottomNavigationBar
 import fr.isen.animalpark.tools.navigationbar.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 
 
 @Composable
-fun MainScreen(biomes: List<Biome>, databaseReference: DatabaseReference, signOutHandler: () -> Unit,  enclosureDetailsHandler:(Enclosure, Int) -> Unit) {
+fun MainScreen(
+    biomes: List<Biome>,
+    databaseReference: DatabaseReference,
+    signOutHandler: () -> Unit,
+    enclosureDetailsHandler:(Enclosure, Int) -> Unit,
+    deleteAccountHandler: () -> Unit,
+    user: FirebaseUser,
+) {
 
     val navController = rememberNavController()
 
@@ -56,7 +63,13 @@ fun MainScreen(biomes: List<Biome>, databaseReference: DatabaseReference, signOu
 
                 }
                 composable(route = Screen.Profile.rout) {
-                    ProfileScreen(signOutHandler = signOutHandler)
+                    ProfileScreen(
+                        signOutHandler = signOutHandler,
+                        deleteAccountHandler = deleteAccountHandler,
+                        user = user
+
+
+                    )
                 }
             }
         NavHost(

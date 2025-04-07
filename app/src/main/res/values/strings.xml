@@ -24,4 +24,15 @@
     <string name="profile">Profil</string>
     <string name="home">Accueil</string>
     <string name="login_biomes">Chargement des biomes...</string>
+    <string name="sign_out">Déconnexion</string>
+    <string name="change_password">Changer le mot de passe</string>
+    <string name="old_password">Ancien mot de passe</string>
+    <string name="new_password">Nouveau mot de passe</string>
+    <string name="password_update_success">Mot de passe mis à jour avec succès</string>
+    <string name="password_update_failure">Echec de la mise à jour du mot de passe</string>
+    <string name ="old_password_incorrect">Ancien mot de passe incorrect</string>
+    <string name ="modify">Modifier</string>
+    <string name = "delete_account">Supprimer le compte</string>
+    <string name="delete" >Supprimer</string>
+    <string name="confirm" >Confirmer</string>
 </resources>

@@ -1,14 +1,14 @@
 package fr.isen.animalpark.screens.profile
 
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -27,17 +28,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.events.EventHandler
-import fr.isen.animalpark.LoginActivity
-import fr.isen.animalpark.MainActivity
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseUser
 import fr.isen.animalpark.R
 
 @Composable
-fun ProfileScreen(signOutHandler: ()-> Unit) {
+fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, user: FirebaseUser) {
     var newPassword = remember { mutableStateOf("") }
     var oldPassword = remember { mutableStateOf("") }
     var deleteAccount = remember {mutableStateOf(false)}
+    val context = LocalContext.current
+
     Column () {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -49,10 +50,10 @@ fun ProfileScreen(signOutHandler: ()-> Unit) {
                 },
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                Text("Sign Out")
+                Text(context.getString(R.string.sign_out))
             }
         }
-        Text("Change Password", style = MaterialTheme.typography.titleLarge,
+        Text(context.getString(R.string.change_password), style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(16.dp))
         OutlinedTextField(
             singleLine = true,
@@ -75,7 +76,7 @@ fun ProfileScreen(signOutHandler: ()-> Unit) {
             onValueChange = {
                 oldPassword.value = it
             },
-            placeholder = {Text("Old Password") },
+            placeholder = {Text(context.getString(R.string.old_password)) },
             visualTransformation = PasswordVisualTransformation()
         )
 
@@ -100,24 +101,57 @@ fun ProfileScreen(signOutHandler: ()-> Unit) {
             onValueChange = {
                 newPassword.value = it
             },
-            placeholder = {Text("New password") },
+            placeholder = {Text(context.getString(R.string.new_password)) },
             visualTransformation = PasswordVisualTransformation()
+        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         )
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp),
             onClick = {
+                val oldPasswordValue = oldPassword.value
+                val newPasswordValue = newPassword.value
+                oldPassword.value = ""
+                newPassword.value = ""
 
+                if (oldPasswordValue.isNullOrEmpty() || newPasswordValue.isNullOrEmpty()) {
+                    Toast.makeText(context, context.getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
+                val credential = EmailAuthProvider.getCredential(user.email!!, oldPasswordValue)
+                user.reauthenticate(credential).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        user.updatePassword(newPasswordValue).addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                Log.d("Firebase", "Password updated successfully.")
+                                Toast.makeText(context, context.getString(R.string.password_update_success), Toast.LENGTH_SHORT).show()
+
+                            } else {
+                                Log.d("Firebase", "Failed to update password: ${updateTask.exception?.message}")
+                                Toast.makeText(context, context.getString(R.string.password_update_failure), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else {
+                        Log.d("Firebase", "Old password is incorrect: ${task.exception?.message}")
+                        Toast.makeText(context, context.getString(R.string.old_password_incorrect), Toast.LENGTH_SHORT).show()
+                    }
+                }
             },
         ) {
             Text(
-                text = "Change Password",
+                text = context.getString(R.string.modify),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(0.dp, 6.dp)
             )
         }
-        Text("Supprimer le compte", style = MaterialTheme.typography.titleLarge,
+        Spacer(modifier = Modifier.padding(16.dp))
+        Text(context.getString(R.string.delete_account), style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(16.dp))
 
         Button(
@@ -125,14 +159,39 @@ fun ProfileScreen(signOutHandler: ()-> Unit) {
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp),
             onClick = {
-
+                deleteAccount.value = true
             },
         ) {
             Text(
-                text = "Supprimer le compte",
+                text = context.getString(R.string.delete),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(0.dp, 6.dp)
             )
+        }
+        if (deleteAccount.value) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+                ,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = {
+                        deleteAccount.value = false
+                    }
+                ) {
+                    Text(context.getString(R.string.cancel))
+                }
+                TextButton(
+                    onClick = {
+                        deleteAccountHandler()
+                        deleteAccount.value = false
+                    }
+                ) {
+                    Text(context.getString(R.string.confirm))
+                }
+            }
         }
     }
 }
