@@ -95,7 +95,7 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                                     style = MaterialTheme.typography.labelLarge
                                 )
 
-                                if (enclosure.animals.isEmpty()) {
+                                if (enclosure.animals.isNullOrEmpty()) {
                                     Text(text = context.getString(R.string.No_animals))
                                 } else {
                                     enclosure.animals.forEach { animal ->
@@ -137,7 +137,7 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                     }
 
                     // Show Services
-                    if (biome.services.isNotEmpty()) {
+                    if (biome.services.isNullOrEmpty()) {
                         Text(
                             text = "Services:",
                             style = MaterialTheme.typography.titleMedium,

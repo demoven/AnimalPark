@@ -80,7 +80,7 @@ fun EnclosureDetailsScreen(
             }
 
             Text("Animals:", style = MaterialTheme.typography.titleMedium)
-            if (enclosure.animals.isEmpty()) {
+            if (enclosure.animals.isNullOrEmpty()) {
                 Text("No animals in this enclosure")
             } else {
                 enclosure.animals.forEach { animal ->

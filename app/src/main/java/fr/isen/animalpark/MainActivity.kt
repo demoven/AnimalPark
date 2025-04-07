@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
 //        getUserDataFromDatabase()
         enableEdgeToEdge()
         setContent {
-            AnimalParkTheme {
                 MainScreen(biomes = biomelist,
                     databaseReference = databaseReference,
                     signOutHandler = {
@@ -54,7 +53,6 @@ class MainActivity : ComponentActivity() {
                         startEnclosureDetailsActivity(enclosure, indexEnclosure)
                     }
                 )
-            }
         }
     }
 
