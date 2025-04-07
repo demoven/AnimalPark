@@ -26,13 +26,33 @@ class LoginActivity : ComponentActivity() {
         }
         enableEdgeToEdge()
         setContent {
-            SignInScreen(auth)
+            SignInScreen(
+                auth = auth,
+                mainActivityHandler = {
+                    startMainActivity()
+                },
+                registerActivityHandler = {
+                    startRegisterActivity()
+                }
+            )
         }
     }
 
     override fun onStart() {
         super.onStart()
         User.setCurrentUser(User("", false))
+    }
+
+    private fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun startRegisterActivity() {
+        val intent = Intent(this, RegisterActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
 

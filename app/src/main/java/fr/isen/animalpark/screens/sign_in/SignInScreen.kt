@@ -1,5 +1,6 @@
 package fr.isen.animalpark.screens.sign_in
 
+import android.app.sdksandbox.sdkprovider.SdkSandboxActivityHandler
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -20,7 +21,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -41,13 +41,15 @@ import fr.isen.animalpark.R
 import fr.isen.animalpark.RegisterActivity
 
 @Composable
-fun SignInScreen(auth: FirebaseAuth) {
+fun SignInScreen(
+    auth: FirebaseAuth,
+    mainActivityHandler: () -> Unit,
+    registerActivityHandler: () -> Unit
+) {
 
-    //Use mutableStateOf to store the email and password
-    var email = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
     val context = LocalContext.current
-
 
     Column(
         modifier = Modifier
@@ -67,10 +69,13 @@ fun SignInScreen(auth: FirebaseAuth) {
                 .size(130.dp)
         )
 
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .padding(40.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(40.dp)
+        )
 
+        //Email field
         OutlinedTextField(
             singleLine = true,
             modifier = Modifier
@@ -94,6 +99,8 @@ fun SignInScreen(auth: FirebaseAuth) {
             },
             placeholder = { Text(context.getString(R.string.email)) }
         )
+
+        //Password field
         OutlinedTextField(
             singleLine = true,
             modifier = Modifier
@@ -118,37 +125,39 @@ fun SignInScreen(auth: FirebaseAuth) {
             placeholder = { Text(context.getString(R.string.password)) },
             visualTransformation = PasswordVisualTransformation()
         )
+
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         )
+
+        //Login button
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp),
             onClick = {
                 if (email.value == "" || password.value == "") {
-                    Toast.makeText(context, context.getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.fill_in_all_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@Button
                 }
                 auth.signInWithEmailAndPassword(email.value, password.value)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Login", "signInWithEmail:success")
-                            //Redirect to the main activity
-                            val intent = Intent(context, MainActivity::class.java)
-                            context.startActivity(intent)
-                            //Finish the current activity
-                            (context as LoginActivity).finish()
-
+                            //Start main activity
+                            mainActivityHandler()
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d("Login", "signInWithEmail:failure", task.exception)
                             //Toast login failed
-                            Toast.makeText(context, context.getString(R.string.failed_login), Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.failed_login),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
             },
@@ -159,13 +168,12 @@ fun SignInScreen(auth: FirebaseAuth) {
                 modifier = Modifier.padding(0.dp, 6.dp)
             )
         }
+
+        //Register button
         TextButton(
             onClick = {
-                //Redirect to the register activity
-                val intent = Intent(context, RegisterActivity::class.java)
-                context.startActivity(intent)
-                //Finish the current activity
-                (context as LoginActivity).finish()
+                //Start register activity
+                registerActivityHandler()
             }
         ) {
             Text(context.getString(R.string.create_account))

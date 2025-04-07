@@ -1,5 +1,6 @@
 package fr.isen.animalpark
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -33,8 +34,25 @@ class RegisterActivity : ComponentActivity() {
         databaseReference = firebaseDatabase.getReference()
         enableEdgeToEdge()
         setContent {
-            SignUpScreen(auth, databaseReference)
+            SignUpScreen(
+                auth = auth,
+                db = databaseReference,
+                loginActivityHandler = { startLoginActivity() },
+                mainActivityHandler = { startMainActivity() }
+            )
         }
+    }
+
+    private fun startMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun startLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
 

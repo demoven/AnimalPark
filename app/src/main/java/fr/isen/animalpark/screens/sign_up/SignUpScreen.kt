@@ -41,14 +41,16 @@ import fr.isen.animalpark.R
 import fr.isen.animalpark.RegisterActivity
 
 @Composable
-fun SignUpScreen(auth: FirebaseAuth, db: DatabaseReference) {
+fun SignUpScreen(
+    auth: FirebaseAuth,
+    db: DatabaseReference,
+    loginActivityHandler: () -> Unit,
+    mainActivityHandler: () -> Unit
+) {
 
-    //Use mutableStateOf to store the email and password
-    var email = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
     val context = LocalContext.current
-
-
 
     Column(
         modifier = Modifier
@@ -68,10 +70,13 @@ fun SignUpScreen(auth: FirebaseAuth, db: DatabaseReference) {
                 .size(130.dp)
         )
 
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .padding(40.dp))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(40.dp)
+        )
 
+        //Email field
         OutlinedTextField(
             singleLine = true,
             modifier = Modifier
@@ -95,6 +100,8 @@ fun SignUpScreen(auth: FirebaseAuth, db: DatabaseReference) {
             },
             placeholder = { Text(context.getString(R.string.email)) }
         )
+
+        //Password field
         OutlinedTextField(
             singleLine = true,
             modifier = Modifier
@@ -119,47 +126,59 @@ fun SignUpScreen(auth: FirebaseAuth, db: DatabaseReference) {
             placeholder = { Text(context.getString(R.string.password)) },
             visualTransformation = PasswordVisualTransformation()
         )
+
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
         )
+
+        //Register button
         Button(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, 0.dp),
             onClick = {
+                //Empty fields check
                 if (email.value == "" || password.value == "") {
-                    Toast.makeText(context, context.getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.fill_in_all_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@Button
                 }
+                //Password length check
+                if (password.value.length < 6) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.password_too_short),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@Button
+                }
+                // Create a new user
                 auth.createUserWithEmailAndPassword(email.value, password.value)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("Register", "createUserWithEmail:success")
+                            //Sign in the user
                             auth.signInWithEmailAndPassword(email.value, password.value)
                                 .addOnCompleteListener { task2 ->
                                     if (task2.isSuccessful) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Log.d("Login", "signInWithEmail:success")
-                                        //Redirect to the main activity
-                                        val intent = Intent(context, MainActivity::class.java)
-                                        context.startActivity(intent)
-                                        //Finish the Register and login activities
-                                        (context as RegisterActivity).finish()
-
+                                        //Launch the main activity
+                                        mainActivityHandler()
                                         if (auth.currentUser != null) {
                                             //Save the user in the database
-                                            db.child("users").child(auth.currentUser!!.uid).child("isAdmin").setValue(false)
+                                            db.child("users").child(auth.currentUser!!.uid)
+                                                .child("isAdmin").setValue(false)
                                         }
-
-
                                     } else {
-                                        // If sign in fails, display a message to the user.
                                         Log.d("Login", "signInWithEmail:failure", task2.exception)
-                                        //Toast login failed
-                                        Toast.makeText(context, context.getString(R.string.failed_register), Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.failed_register),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
 
@@ -175,13 +194,12 @@ fun SignUpScreen(auth: FirebaseAuth, db: DatabaseReference) {
                 modifier = Modifier.padding(0.dp, 6.dp)
             )
         }
+
+        //Cancel button
         TextButton(
             onClick = {
-                //Redirect to the login activity
-                val intent = Intent(context, LoginActivity::class.java)
-                context.startActivity(intent)
-                //Finish the current activity
-                (context as RegisterActivity).finish()
+                //Launch the login activity
+                loginActivityHandler()
             },
         ) {
             Text(context.getString(R.string.cancel))

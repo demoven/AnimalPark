@@ -34,12 +34,12 @@ import fr.isen.animalpark.R
 
 @Composable
 fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, user: FirebaseUser) {
-    var newPassword = remember { mutableStateOf("") }
-    var oldPassword = remember { mutableStateOf("") }
-    var deleteAccount = remember {mutableStateOf(false)}
+    val newPassword = remember { mutableStateOf("") }
+    val oldPassword = remember { mutableStateOf("") }
+    val deleteAccount = remember {mutableStateOf(false)}
     val context = LocalContext.current
 
-    Column () {
+    Column {
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
