@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -16,12 +17,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 import fr.isen.animalpark.R
 
 @Composable
 fun BottomNavigationBar(
     navController: NavController,
+    callHandler: () -> Unit
 ) {
     val context = LocalContext.current
     val selectedNavigationIndex = rememberSaveable {
@@ -72,10 +75,31 @@ fun BottomNavigationBar(
                     selectedIconColor = MaterialTheme.colorScheme.surface,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )
-
             )
         }
+
+        // Emergency call button
+        NavigationBarItem(
+            selected = false,
+            onClick = {
+                callHandler()
+            },
+            icon = {
+                Icon(imageVector = Icons.Default.Phone, contentDescription = context.getString(R.string.emergency_call))
+            },
+            label = {
+                Text(
+                    context.getString(R.string.emergency),
+                    color = colorResource(id = R.color.red)
+                )
+            },
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.surface,
+                indicatorColor = MaterialTheme.colorScheme.primary
+            )
+        )
     }
+
 }
 
 data class NavigationItem(

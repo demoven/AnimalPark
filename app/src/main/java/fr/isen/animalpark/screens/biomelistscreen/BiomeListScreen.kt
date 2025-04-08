@@ -1,12 +1,13 @@
 package fr.isen.animalpark.screens.biomelistscreen
 
-import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,11 +30,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
-import fr.isen.animalpark.EnclosureDetailsActivity
+import  androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.colorResource
 import fr.isen.animalpark.R
 
 import fr.isen.animalpark.models.Biome
@@ -42,10 +47,14 @@ import fr.isen.animalpark.models.User
 
 
 @Composable
-fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, enclosureDetailsHandler:(Enclosure, Int) -> Unit) {
+fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, enclosureDetailsHandler:(Enclosure, Int) -> Unit, innerPadding: PaddingValues) {
     val context = LocalContext.current
 
-    LazyColumn() {
+    LazyColumn(
+        modifier = Modifier.padding(
+            bottom = innerPadding.calculateBottomPadding()
+        ),
+    ) {
         items(biomes) { biome ->
             var expanded by remember { mutableStateOf(false) }
 
@@ -59,7 +68,8 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                 Text(
                     text = biome.name,
                     color = Color(android.graphics.Color.parseColor(biome.color)),
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 28.sp,
                 )
 
                 if (expanded) {
@@ -89,78 +99,122 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                                 .fillMaxWidth()
                             //Border color red*
                                 .border(
-                                    BorderStroke(1.dp, if (isOpen) Color.Transparent else Color.Red),
+                                    BorderStroke(2.dp, if (isOpen) Color.Transparent else Color.Red),
                                     shape = RoundedCornerShape(8.dp)
                                 ),
                             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                         ) {
                             Column(modifier = Modifier.padding(12.dp)) {
-                                Text(text = "${context.getString(R.string.meal)}: $mealTime")
-                                Text(text = "${context.getString(R.string.open)}: ${if (isOpen) context.getString(R.string.yes) else context.getString(R.string.no)}")
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.meal), // Replace with your PNG resource
+                                            contentDescription = context.getString(R.string.meal),
+                                            modifier = Modifier
+                                                .requiredSize(24.dp) // Adjust size as needed
+                                                .padding(end = 4.dp)
+                                        )
+                                        Text(
+                                            text = mealTime,
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontSize = 20.sp
+                                        )
+                                    }
+                                    Text(
+                                        text = if (isOpen) context.getString(R.string.open) else context.getString(R.string.closed),
+                                        modifier = Modifier.weight(1f),
+                                        textAlign = TextAlign.End,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontSize = 20.sp
+                                    )
+                                }
 
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "${context.getString(R.string.animals)}:",
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-
+//
                                 if (enclosure.animals.isNullOrEmpty()) {
                                     Text(text = context.getString(R.string.No_animals))
                                 } else {
                                     enclosure.animals.forEach { animal ->
                                         Text(
-                                            text = "- ${animal.name}",
-                                            modifier = Modifier.padding(start = 8.dp)
+                                            text = animal.name,
+                                            modifier = Modifier.padding(start = 8.dp),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontSize = 20.sp
                                         )
                                     }
                                 }
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
-                                // Button to View Enclosure Details
-                                Button(
-                                    onClick = {
-                                        enclosureDetailsHandler(enclosure, biome.enclosures.indexOf(enclosure))
-                                    }
-                                ) {
-                                    Text("Voir les détails")
-                                }
-
-                                // Admin Toggle Button
-                                if (User.getCurrentUser()?.isAdmin == true) {
+                                Row {
+                                    // Button to View Enclosure Details
                                     Button(
                                         onClick = {
-                                            val biomeId = enclosure.id_biomes.toInt() - 1
-                                            val enclosureIndex = biome.enclosures.indexOfFirst { it.id == enclosure.id }
-                                            enclosure.isOpen = !enclosure.isOpen
-                                            isOpen = enclosure.isOpen
-                                            val updates = mapOf("isOpen" to enclosure.isOpen)
-                                            databaseReference.child("biomes").child(biomeId.toString()).child("enclosures").child(enclosureIndex.toString()).updateChildren(updates)
+                                            enclosureDetailsHandler(enclosure, biome.enclosures.indexOf(enclosure))
                                         }
                                     ) {
-                                        Text(if (enclosure.isOpen) "fermer" else "ouvrir")
+                                        Text(context.getString(R.string.see_details))
+                                    }
+                                    Spacer(
+                                        modifier = Modifier.padding(horizontal = 4.dp)
+                                    )
+
+                                    // Admin Toggle Button
+                                    if (User.getCurrentUser()?.isAdmin == true) {
+                                        Button(
+                                            onClick = {
+                                                val biomeId = enclosure.id_biomes.toInt() - 1
+                                                val enclosureIndex = biome.enclosures.indexOfFirst { it.id == enclosure.id }
+                                                enclosure.isOpen = !enclosure.isOpen
+                                                isOpen = enclosure.isOpen
+                                                val updates = mapOf("isOpen" to enclosure.isOpen)
+                                                databaseReference.child("biomes").child(biomeId.toString()).child("enclosures").child(enclosureIndex.toString()).updateChildren(updates)
+                                            }
+                                        ) {
+                                            Text(if (enclosure.isOpen) context.getString(R.string.close_enclosure) else context.getString(R.string.open_enclosure))
+                                        }
                                     }
                                 }
+
                             }
                         }
                     }
 
                     // Show Services
                     if (biome.services.isNullOrEmpty()) {
+                        Text(text = context.getString(R.string.no_services), modifier = Modifier.padding(start = 8.dp))
+                    } else {
                         Text(
-                            text = "Services:",
+                            text = context.getString(R.string.services),
                             style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = Modifier.padding(top = 8.dp),
+                            fontSize = 20.sp
                         )
 
                         biome.services.forEach { service ->
-                            Text(
-                                text = "- ${service.name} (Available: ${if (service.availability) "Yes" else "No"})",
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
+                            Row {
+                                Image(
+                                    painter = if(service.availability) painterResource(id = R.drawable.check) else painterResource(id = R.drawable.xmark),
+                                    contentDescription = context.getString(R.string.service_availability),
+                                    modifier = Modifier
+                                        .requiredSize(24.dp)
+                                        .padding(end = 4.dp),
+                                    colorFilter = if(service.availability)  ColorFilter.tint(colorResource(id = R.color.green)) else ColorFilter.tint(colorResource(id = R.color.red))
+                                )
+                                Text(
+                                    text = service.name,
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontSize = 20.sp
+                                )
+                            }
                         }
-                    } else {
-                        Text(text = "No services available in this biome.", modifier = Modifier.padding(start = 8.dp))
                     }
                 }
             }

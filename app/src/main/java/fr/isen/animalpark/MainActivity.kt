@@ -1,6 +1,7 @@
 package fr.isen.animalpark
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -61,7 +62,10 @@ class MainActivity : ComponentActivity() {
                 deleteAccountHandler = {
                     deleteAccount()
                 },
-                user = user
+                user = user,
+                callHandler = {
+                    callEmergency()
+                }
             )
         }
     }
@@ -128,6 +132,18 @@ class MainActivity : ComponentActivity() {
         intent.putExtra(EnclosureDetailsActivity.ECLOSURE_INDEX, indexEnclosure)
         startActivity(intent)
     }
+
+    private fun callEmergency() {
+        val phoneNumber = "0123456789" // Replace with the actual emergency number
+        val u = Uri.parse("tel:$phoneNumber")
+        val i = Intent(Intent.ACTION_DIAL, u)
+        try {
+            startActivity(i)
+        } catch (e: Exception) {
+            Log.d("MainActivity", "Error: $e")
+        }
+    }
+
 
     private fun deleteAccount() {
         val user = auth.currentUser

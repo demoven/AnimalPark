@@ -20,8 +20,6 @@ import fr.isen.animalpark.screens.location.LocationScreen
 import fr.isen.animalpark.screens.profile.ProfileScreen
 import fr.isen.animalpark.tools.navigationbar.BottomNavigationBar
 import fr.isen.animalpark.tools.navigationbar.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 
 
 @Composable
@@ -32,6 +30,7 @@ fun MainScreen(
     enclosureDetailsHandler:(Enclosure, Int) -> Unit,
     deleteAccountHandler: () -> Unit,
     user: FirebaseUser,
+    callHandler: () -> Unit
 ) {
 
     val navController = rememberNavController()
@@ -39,7 +38,12 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = {
+            BottomNavigationBar(
+                navController,
+                callHandler = callHandler,
+            )
+        }
     ) { innerPadding ->
 
         val graph =
@@ -54,7 +58,8 @@ fun MainScreen(
                             databaseReference = databaseReference,
                             enclosureDetailsHandler = { enclosure, index ->
                                 enclosureDetailsHandler(enclosure, index)
-                            }
+                            },
+                            innerPadding = innerPadding,
                         )
                     }
                     else {

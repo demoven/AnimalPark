@@ -12,8 +12,11 @@
     <string name="failed_login">Echec de l authentification</string>
     <string name="failed_register">Echec de l inscription</string>
     <string name="cancel">Annuler</string>
-    <string name="meal">Repas</string>
+    <string name="meal">Heure du repas</string>
     <string name="open">Ouvert</string>
+    <string name="closed">Fermé</string>
+    <string name="close_enclosure">Fermer l enclos</string>
+    <string name="open_enclosure">Ouvrir l enclos</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="animals">Animals</string>
@@ -36,4 +39,10 @@
     <string name="delete" >Supprimer</string>
     <string name="confirm" >Confirmer</string>
     <string name="password_too_short">Le mot de passe est trop court</string>
+    <string name="emergency">Urgence</string>
+    <string name="emergency_call">Appel d urgence</string>
+    <string name="service_availability">Disponibilité du service</string>
+    <string name="see_details">Voir les détails</string>
+    <string name="services">Services</string>
+    <string name="no_services">Aucun service disponible</string>
 </resources>
