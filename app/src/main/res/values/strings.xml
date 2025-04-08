@@ -19,7 +19,7 @@
     <string name="open_enclosure">Ouvrir l enclos</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
-    <string name="animals">Animals</string>
+    <string name="animals">Animaux</string>
     <string name="No_animals">Pas d animal dans l enclos </string>
     <string name="title_activity_enclosure_details">EnclosureDetails</string>
     <string name="title_activity_animal_details">AnimalDetailsActivity</string>
@@ -45,4 +45,11 @@
     <string name="see_details">Voir les détails</string>
     <string name="services">Services</string>
     <string name="no_services">Aucun service disponible</string>
+    <string name="loading_biomes">Chargement des biomes...</string>
+    <string name="details">Voir plus</string>
+    <string name="modify_feeding_time">Modifier l heure du repas</string>
+    <string name="enclosure_details_title">Détails de l enclos</string>
+    <string name="get_back">Retour</string>
+    <string name="description">Description</string>
+    <string name="prompt">Donne moi une courte description de l animal</string>
 </resources>

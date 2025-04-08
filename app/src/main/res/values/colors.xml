@@ -10,5 +10,7 @@
     <color name="green">#A1C740</color>
     <color name="red">#E75C38</color>
     <color name="grey">#55575A</color>
+    <color name="purple_80">#FFD0BCFF</color>
+    <color name="purple_40">#FF6650a4</color>
 
 </resources>

@@ -1,6 +1,5 @@
 package fr.isen.animalpark.screens.profile
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -33,10 +32,14 @@ import com.google.firebase.auth.FirebaseUser
 import fr.isen.animalpark.R
 
 @Composable
-fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, user: FirebaseUser) {
+fun ProfileScreen(
+    signOutHandler: () -> Unit,
+    deleteAccountHandler: () -> Unit,
+    user: FirebaseUser
+) {
     val newPassword = remember { mutableStateOf("") }
     val oldPassword = remember { mutableStateOf("") }
-    val deleteAccount = remember {mutableStateOf(false)}
+    val deleteAccount = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Column {
@@ -53,8 +56,11 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
                 Text(context.getString(R.string.sign_out))
             }
         }
-        Text(context.getString(R.string.change_password), style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(16.dp))
+        Text(
+            context.getString(R.string.change_password),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(16.dp)
+        )
         OutlinedTextField(
             singleLine = true,
             modifier = Modifier
@@ -76,7 +82,7 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
             onValueChange = {
                 oldPassword.value = it
             },
-            placeholder = {Text(context.getString(R.string.old_password)) },
+            placeholder = { Text(context.getString(R.string.old_password)) },
             visualTransformation = PasswordVisualTransformation()
         )
 
@@ -101,7 +107,7 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
             onValueChange = {
                 newPassword.value = it
             },
-            placeholder = {Text(context.getString(R.string.new_password)) },
+            placeholder = { Text(context.getString(R.string.new_password)) },
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(
@@ -120,7 +126,11 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
                 newPassword.value = ""
 
                 if (oldPasswordValue.isNullOrEmpty() || newPasswordValue.isNullOrEmpty()) {
-                    Toast.makeText(context, context.getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.fill_in_all_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     return@Button
                 }
 
@@ -129,17 +139,26 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
                     if (task.isSuccessful) {
                         user.updatePassword(newPasswordValue).addOnCompleteListener { updateTask ->
                             if (updateTask.isSuccessful) {
-                                Log.d("Firebase", "Password updated successfully.")
-                                Toast.makeText(context, context.getString(R.string.password_update_success), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.password_update_success),
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
                             } else {
-                                Log.d("Firebase", "Failed to update password: ${updateTask.exception?.message}")
-                                Toast.makeText(context, context.getString(R.string.password_update_failure), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.password_update_failure),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     } else {
-                        Log.d("Firebase", "Old password is incorrect: ${task.exception?.message}")
-                        Toast.makeText(context, context.getString(R.string.old_password_incorrect), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.old_password_incorrect),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             },
@@ -151,8 +170,10 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
             )
         }
         Spacer(modifier = Modifier.padding(16.dp))
-        Text(context.getString(R.string.delete_account), style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(16.dp))
+        Text(
+            context.getString(R.string.delete_account), style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(16.dp)
+        )
 
         Button(
             modifier = Modifier
@@ -172,8 +193,7 @@ fun ProfileScreen(signOutHandler: ()-> Unit, deleteAccountHandler: () -> Unit, u
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp)
-                ,
+                    .padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(

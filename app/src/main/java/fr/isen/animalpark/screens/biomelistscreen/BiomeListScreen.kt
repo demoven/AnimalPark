@@ -114,10 +114,10 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         Image(
-                                            painter = painterResource(id = R.drawable.meal), // Replace with your PNG resource
+                                            painter = painterResource(id = R.drawable.meal),
                                             contentDescription = context.getString(R.string.meal),
                                             modifier = Modifier
-                                                .requiredSize(24.dp) // Adjust size as needed
+                                                .requiredSize(24.dp)
                                                 .padding(end = 4.dp)
                                         )
                                         Text(

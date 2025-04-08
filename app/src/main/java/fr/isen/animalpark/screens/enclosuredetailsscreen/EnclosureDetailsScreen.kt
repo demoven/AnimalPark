@@ -1,14 +1,18 @@
 package fr.isen.animalpark.screens.enclosuredetailsscreen
 
-import android.util.Log
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -18,10 +22,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.ColorFilter
 import com.google.firebase.database.DatabaseReference
+import fr.isen.animalpark.R
 import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.models.User
 import fr.isen.animalpark.tools.DialTimePicker
@@ -32,28 +43,81 @@ fun EnclosureDetailsScreen(
     enclosure: Enclosure,
     eventHandler: (String) -> Unit,
     databaseReference: DatabaseReference,
-    index: Int
+    index: Int,
+    closeActivityHandler: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedTime: TimePickerState? by remember { mutableStateOf(null) }
     var mealTime by remember { mutableStateOf(enclosure.meal) }
+    val context = LocalContext.current
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
     ) { innerPadding ->
 
         Column(modifier = Modifier.padding(innerPadding)) {
-            Text(
-                text = "Enclosure ID: ${enclosure.id}",
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text("Meal Type: $mealTime")
-            Text("Open: ${if (enclosure.isOpen) "Yes" else "No"}")
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = {
+                        closeActivityHandler()
+                    }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.arrow),
+                        contentDescription = context.getString(R.string.get_back),
+                        modifier = Modifier.requiredSize(24.dp),
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Text (
+                    text = context.getString(R.string.enclosure_details_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontSize = 28.sp,
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.meal),
+                        contentDescription = context.getString(R.string.meal),
+                        modifier = Modifier
+                            .requiredSize(24.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text(
+                        text = mealTime,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontSize = 20.sp
+                    )
+                }
+                Text(
+                    text = if (enclosure.isOpen) context.getString(R.string.open) else context.getString(R.string.closed),
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.End,
+                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = 20.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             if (User.getCurrentUser()?.isAdmin == true) {
                 Button(onClick = {
                     showDialog = true
                 }) {
-                    Text("Modifier l'heure de repas")
+                    Text(context.getString(R.string.modify_feeding_time))
                 }
 
                 if (showDialog) {
@@ -61,10 +125,6 @@ fun EnclosureDetailsScreen(
                         onConfirm = { time ->
                             selectedTime = time
                             showDialog = false
-                            Log.d(
-                                "TimePicker",
-                                "Selected time: ${selectedTime?.hour}:${selectedTime?.minute}"
-                            )
                             if (selectedTime != null) {
                                 databaseReference.child("biomes")
                                     .child((enclosure.id_biomes.toInt() - 1).toString())
@@ -78,20 +138,47 @@ fun EnclosureDetailsScreen(
                         }
                     )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Text("Animals:", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = context.getString(R.string.animals),
+                style =  MaterialTheme.typography.titleMedium,
+                fontSize = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             if (enclosure.animals.isNullOrEmpty()) {
-                Text("No animals in this enclosure")
+                Text(context.getString(R.string.No_animals))
             } else {
                 enclosure.animals.forEach { animal ->
-                    Text(
-                        modifier = Modifier.clickable { eventHandler(animal.name) },
-                        text = "- ${animal.name} (ID: ${animal.id})"
-                    )
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Text(
+                            text =animal.name,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontSize = 20.sp
+                        )
+                        IconButton(
+                            onClick = {
+                                eventHandler(animal.name)
+                            }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.plus),
+                                contentDescription = context.getString(R.string.details),
+                                modifier = Modifier.requiredSize(24.dp),
+                                colorFilter = ColorFilter.tint(colorResource(id = R.color.purple_80))
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                 }
             }
-
         }
     }
 

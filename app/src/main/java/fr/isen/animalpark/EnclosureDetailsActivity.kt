@@ -42,7 +42,10 @@ class EnclosureDetailsActivity : ComponentActivity() {
                             startAnimalDetailsActivity(animalName)
                         },
                         databaseReference = databaseReference,
-                        index = index
+                        index = index,
+                        closeActivityHandler = {
+                            closeActivity()
+                        }
                     )
 
                 } else {
@@ -57,6 +60,10 @@ class EnclosureDetailsActivity : ComponentActivity() {
             putExtra(AnimalDetailsActivity.animalExtraKey, animalName)
         }
         startActivity(intent)
+    }
+
+    private fun closeActivity() {
+        finish()
     }
 
 }
