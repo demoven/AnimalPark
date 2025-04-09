@@ -9,6 +9,8 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import fr.isen.animalpark.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -16,6 +18,7 @@ fun DialTimePicker(
     onConfirm: (TimePickerState) -> Unit,
     onDismiss: () -> Unit,
 ){
+    val context = LocalContext.current
     val currentTime = Calendar.getInstance()
     val timePickerState = rememberTimePickerState(
         initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
@@ -26,10 +29,10 @@ fun DialTimePicker(
     Column {
         TimeInput(state = timePickerState)
         Button(onClick = onDismiss) {
-            Text("Dismiss")
+            Text(context.getString(R.string.cancel))
         }
         Button (onClick = { onConfirm(timePickerState) }) {
-            Text("Confirm")
+            Text(context.getString(R.string.confirm))
         }
     }
 }

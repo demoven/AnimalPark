@@ -86,6 +86,7 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                         enclosureRef.child("meal").addValueEventListener(object : ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 mealTime = snapshot.getValue(String::class.java) ?: enclosure.meal
+                                enclosure.meal = mealTime
                             }
 
                             override fun onCancelled(error: DatabaseError) {
@@ -208,7 +209,7 @@ fun BiomeListScreen(biomes: List<Biome>, databaseReference: DatabaseReference, e
                                     colorFilter = if(service.availability)  ColorFilter.tint(colorResource(id = R.color.green)) else ColorFilter.tint(colorResource(id = R.color.red))
                                 )
                                 Text(
-                                    text = service.name,
+                                    text = service.name.replaceFirstChar { it.uppercase() },
                                     modifier = Modifier.padding(start = 8.dp),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontSize = 20.sp
