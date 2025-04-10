@@ -15,7 +15,7 @@ Adresse mail:
 Mot de passe:
 > test123
 
-Pour utiliser un compte classique, il suffit de créer un compte par le biais de l'application.
+Pour utiliser un compte classique, il suffit d'en créer un par le biais de l'application.
 
 ### La navigation pour les itinéraires
 
