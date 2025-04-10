@@ -18,7 +18,7 @@ import fr.isen.animalpark.R
 import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.screens.biomelistscreen.BiomeListScreen
-import fr.isen.animalpark.screens.location.LocationScreen
+import fr.isen.animalpark.screens.navigation.Location
 import fr.isen.animalpark.screens.profile.ProfileScreen
 import fr.isen.animalpark.tools.navigationbar.BottomNavigationBar
 import fr.isen.animalpark.tools.navigationbar.Screen
@@ -51,7 +51,13 @@ fun MainScreen(
         val graph =
             navController.createGraph(startDestination = Screen.Home.rout) {
                 composable(route = Screen.Location.rout) {
-                    LocationScreen()
+                    if (biomes.isNotEmpty()) {
+                        val allEnclosures = biomes.flatMap { it.enclosures }
+                        Location(enclosures = allEnclosures)
+                    } else {
+                        Text("Loading...")
+                    }
+
                 }
                 composable(route = Screen.Home.rout) {
                     if (biomes.isNotEmpty()) {
