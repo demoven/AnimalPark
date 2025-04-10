@@ -18,7 +18,7 @@ import fr.isen.animalpark.R
 import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.screens.biomelistscreen.BiomeListScreen
-import fr.isen.animalpark.screens.navigation.Location
+import fr.isen.animalpark.screens.location.Location
 import fr.isen.animalpark.screens.profile.ProfileScreen
 import fr.isen.animalpark.tools.navigationbar.BottomNavigationBar
 import fr.isen.animalpark.tools.navigationbar.Screen
@@ -53,9 +53,12 @@ fun MainScreen(
                 composable(route = Screen.Location.rout) {
                     if (biomes.isNotEmpty()) {
                         val allEnclosures = biomes.flatMap { it.enclosures }
-                        Location(enclosures = allEnclosures)
+                        Location(
+                            enclosures = allEnclosures,
+                            innerPadding = innerPadding
+                        )
                     } else {
-                        Text("Loading...")
+                        Text(context.getString(R.string.loading))
                     }
 
                 }

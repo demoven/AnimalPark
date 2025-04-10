@@ -23,7 +23,7 @@
     <string name="No_animals">Pas d animal dans l enclos </string>
     <string name="title_activity_enclosure_details">EnclosureDetails</string>
     <string name="title_activity_animal_details">AnimalDetailsActivity</string>
-    <string name="location">Emplacement</string>
+    <string name="location">Navigation</string>
     <string name="profile">Profil</string>
     <string name="home">Accueil</string>
     <string name="login_biomes">Chargement des biomes...</string>
@@ -52,4 +52,14 @@
     <string name="get_back">Retour</string>
     <string name="description">Description</string>
     <string name="prompt">Donne moi une courte description de l animal</string>
+    <string name="error_start">Erreur : L enclos de départ ou d arrivée est null</string>
+    <string name="error_list_enclosures">Erreur : La liste des enclos est vide</string>
+    <string name="error_no_animals">Erreur : Aucun animal trouvé dans l enclos</string>
+    <string name="error_path_not_found">Erreur : Aucun chemin trouvé</string>
+    <string name="start_location">Position de départ</string>
+    <string name="end_location">Position d arrivée</string>
+    <string name="calculate_route">Calculer</string>
+    <string name="route">Itinéraire</string>
+    <string name="select_enclosure">Sélectionner un enclos</string>
+    <string name="loading">Chargement...</string>
 </resources>
