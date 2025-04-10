@@ -1,6 +1,5 @@
 package fr.isen.animalpark.screens.sign_up
 
-import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -35,10 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import fr.isen.animalpark.LoginActivity
-import fr.isen.animalpark.MainActivity
 import fr.isen.animalpark.R
-import fr.isen.animalpark.RegisterActivity
 
 @Composable
 fun SignUpScreen(

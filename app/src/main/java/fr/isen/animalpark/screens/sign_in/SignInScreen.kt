@@ -1,8 +1,5 @@
 package fr.isen.animalpark.screens.sign_in
 
-import android.app.sdksandbox.sdkprovider.SdkSandboxActivityHandler
-import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -35,10 +32,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import fr.isen.animalpark.LoginActivity
-import fr.isen.animalpark.MainActivity
 import fr.isen.animalpark.R
-import fr.isen.animalpark.RegisterActivity
 
 @Composable
 fun SignInScreen(

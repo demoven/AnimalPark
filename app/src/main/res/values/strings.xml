@@ -62,4 +62,5 @@
     <string name="route">Itinéraire</string>
     <string name="select_enclosure">Sélectionner un enclos</string>
     <string name="loading">Chargement...</string>
+    <string name="enclosure_not_found">Enclos non trouvé</string>
 </resources>

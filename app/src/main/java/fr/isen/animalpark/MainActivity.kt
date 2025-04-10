@@ -7,14 +7,9 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -30,8 +25,6 @@ import fr.isen.animalpark.models.Biome
 import fr.isen.animalpark.models.Enclosure
 import fr.isen.animalpark.models.User
 import fr.isen.animalpark.screens.main.MainScreen
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +39,6 @@ class MainActivity : ComponentActivity() {
         firebaseDatabase = FirebaseDatabase.getInstance()
         databaseReference = firebaseDatabase.getReference()
         retrieveDataFromDatabase()
-//        getUserDataFromDatabase()
         enableEdgeToEdge()
         setContent {
             MainScreen(
@@ -162,12 +154,4 @@ class MainActivity : ComponentActivity() {
                 }
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
 }
