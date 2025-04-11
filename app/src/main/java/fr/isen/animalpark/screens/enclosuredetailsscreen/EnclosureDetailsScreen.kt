@@ -1,6 +1,8 @@
 package fr.isen.animalpark.screens.enclosuredetailsscreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,9 +16,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePickerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -31,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.input.TextFieldValue
 import com.google.firebase.database.DatabaseReference
 import fr.isen.animalpark.R
 import fr.isen.animalpark.models.Enclosure
@@ -49,6 +58,7 @@ fun EnclosureDetailsScreen(
     var showDialog by remember { mutableStateOf(false) }
     var selectedTime: TimePickerState? by remember { mutableStateOf(null) }
     var mealTime by remember { mutableStateOf(enclosure.meal) }
+    var reviews by remember { mutableStateOf(enclosure.reviews)}
     val context = LocalContext.current
     Scaffold(
         modifier = Modifier
@@ -179,8 +189,100 @@ fun EnclosureDetailsScreen(
 
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = context.getString(R.string.leave_a_review),
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            var reviewText by remember { mutableStateOf(TextFieldValue("")) }
+            var selectedStars by remember { mutableStateOf(0) }
+
+            OutlinedTextField(
+                value = reviewText,
+                onValueChange = { reviewText = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(context.getString(R.string.your_review)) }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                (1..5).forEach { star ->
+                    Icon(
+                        imageVector = if (star <= selectedStars) Icons.Filled.Star else Icons.Outlined.Star,
+                        contentDescription = "Star $star",
+                        modifier = Modifier
+                            .requiredSize(32.dp)
+                            .clickable { selectedStars = star },
+                        tint = if (star <= selectedStars) Color(0xFFFFD700) else Color.Gray
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    val reviewMap = mapOf(
+                        "rating" to selectedStars,
+                        "comment" to reviewText.text
+                    )
+
+                    databaseReference.child("biomes")
+                        .child((enclosure.id_biomes.toInt() - 1).toString())
+                        .child("enclosures")
+                        .child(index.toString())
+                        .child("reviews")
+                        .push()
+                        .setValue(reviewMap)
+                          },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(context.getString(R.string.send_review))
+            }
+            enclosure.reviews?.values?.forEach { review ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        (1..5).forEach { star ->
+                            Icon(
+                                imageVector = if (star <= review.rating) Icons.Filled.Star else Icons.Outlined.Star,
+                                contentDescription = "Star $star",
+                                modifier = Modifier.requiredSize(24.dp),
+                                tint = if (star <= review.rating) Color(0xFFFFD700) else Color.Gray
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = review.comment,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+
+
+        }
+
         }
     }
 
-}
 

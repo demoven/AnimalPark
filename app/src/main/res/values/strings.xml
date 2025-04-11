@@ -63,4 +63,7 @@
     <string name="select_enclosure">Sélectionner un enclos</string>
     <string name="loading">Chargement...</string>
     <string name="enclosure_not_found">Enclos non trouvé</string>
+    <string name="leave_a_review">Laisser un avis</string>
+    <string name="your_review">Votre avis</string>
+    <string name="send_review">Envoyer</string>
 </resources>

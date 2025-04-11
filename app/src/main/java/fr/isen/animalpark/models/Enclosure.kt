@@ -12,5 +12,6 @@ data class Enclosure(
     var meal: String,
     val animals: List<Animal> = emptyList(),
     var isOpen: Boolean = false,
-    val neighbors: List<Neighbor> = emptyList()
+    val neighbors: List<Neighbor> = emptyList(),
+    val reviews: Map<String, Review>? = null
 ) : Serializable
