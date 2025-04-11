@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,9 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.input.TextFieldValue
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import fr.isen.animalpark.R
 import fr.isen.animalpark.models.Enclosure
+import fr.isen.animalpark.models.Review
 import fr.isen.animalpark.models.User
 import fr.isen.animalpark.tools.DialTimePicker
 
@@ -58,8 +63,29 @@ fun EnclosureDetailsScreen(
     var showDialog by remember { mutableStateOf(false) }
     var selectedTime: TimePickerState? by remember { mutableStateOf(null) }
     var mealTime by remember { mutableStateOf(enclosure.meal) }
-    var reviews by remember { mutableStateOf(enclosure.reviews)}
+    var reviews by remember {mutableStateOf(emptyList<Review>())}
     val context = LocalContext.current
+
+    // Listen for real-time updates
+    LaunchedEffect(Unit) {
+        val reviewsRef = databaseReference.child("biomes")
+            .child((enclosure.id_biomes.toInt() - 1).toString())
+            .child("enclosures")
+            .child(index.toString())
+            .child("reviews")
+
+        reviewsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val updatedReviews = snapshot.children.mapNotNull { it.getValue(Review::class.java) }
+                reviews = updatedReviews
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle database error
+            }
+        })
+    }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -235,6 +261,8 @@ fun EnclosureDetailsScreen(
                         "rating" to selectedStars,
                         "comment" to reviewText.text
                     )
+                    reviewText = TextFieldValue("")
+                    selectedStars = 0
 
                     databaseReference.child("biomes")
                         .child((enclosure.id_biomes.toInt() - 1).toString())
@@ -248,7 +276,7 @@ fun EnclosureDetailsScreen(
             ) {
                 Text(context.getString(R.string.send_review))
             }
-            enclosure.reviews?.values?.forEach { review ->
+            reviews.forEach { review ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -277,11 +305,7 @@ fun EnclosureDetailsScreen(
                     )
                 }
             }
-
-
-
         }
-
         }
     }
 
